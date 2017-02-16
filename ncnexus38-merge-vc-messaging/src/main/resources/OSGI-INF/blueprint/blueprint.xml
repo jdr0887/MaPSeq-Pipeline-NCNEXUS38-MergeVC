@@ -16,7 +16,7 @@
     init-method="start" destroy-method="stop" activation="eager">
     <property name="connectionFactory" ref="connectionFactory" />
     <property name="messageListener" ref="NCNEXUS38MergeVCMessageListener" />
-    <property name="destinationName" value="queue/ncnexus38.mergevc" />
+    <property name="destinationName" value="queue/ncnexus38.merge.vc" />
   </bean>
 
 </blueprint>
