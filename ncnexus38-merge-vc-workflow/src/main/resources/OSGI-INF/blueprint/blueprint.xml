@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0" default-activation="lazy">
+
+  <cm:property-placeholder persistent-id="edu.unc.mapseq.workflow.ncnexus38.mergevc"
+    update-strategy="reload">
+    <cm:default-properties>
+      <cm:property name="corePoolSize" value="100" />
+      <cm:property name="maxPoolSize" value="100" />
+      <cm:property name="subjectMergeHome" value="/projects/sequence_analysis/medgenwork/prod/NCNEXUS38/subject-merge" />
+      <cm:property name="siteName" value="Hatteras" />
+      <cm:property name="readGroupPlatform" value="Illumina MiSeq" />
+      <!-- build 37 -->
+      <!-- <cm:property name="par1Coordinate" value="60001-2699520" /> -->
+      <!-- <cm:property name="par2Coordinate" value="154931044-155260560" /> -->
+      <!-- <cm:property name="referenceSequence" -->
+      <!-- value="$NCNEXUS_REFERENCES_DIRECTORY/BUILD.37.1/bwa061sam0118/BUILD.37.1.plusM.sorted.shortid.fa" /> -->
+      <!-- <cm:property name="baitIntervalList" -->
+      <!-- value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.interval_list" /> -->
+      <!-- <cm:property name="targetIntervalList" -->
+      <!-- value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.interval_list" /> -->
+      <!-- <cm:property name="bed" -->
+      <!-- value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.bed" /> -->
+      <!-- build 38 -->
+      <cm:property name="par1Coordinate" value="10001-2781479" />
+      <cm:property name="par2Coordinate" value="155701383-156030895" />
+      <cm:property name="referenceSequence" value="$NCNEXUS_REFERENCES_DIRECTORY/BUILD.38/BUILD.38.p7.plusM.sorted.shortid.Ymasked.fa" />
+      <cm:property name="baitIntervalList"
+        value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.38.interval_list" />
+      <cm:property name="targetIntervalList"
+        value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.38.interval_list" />
+      <cm:property name="bed"
+        value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.38.bed" />
+
+      <cm:property name="sselProbe" value="5" />
+      <cm:property name="numberOfFreeBayesSubsets" value="12" />
+      <cm:property name="gender" value="M" />
+      <cm:property name="icSNPIntervalList" value="$NCNEXUS_RESOURCES_DIRECTORY/ncgenes/ic_snp_v2.38.list" />
+    </cm:default-properties>
+  </cm:property-placeholder>
+
+  <reference id="maPSeqConfigurationService" interface="edu.unc.mapseq.config.MaPSeqConfigurationService" />
+  <reference id="maPSeqDAOBeanService" interface="edu.unc.mapseq.dao.MaPSeqDAOBeanService" />
+
+  <bean id="NCNEXUS38MergeVCWorkflowBeanService" class="edu.unc.mapseq.workflow.core.WorkflowBeanServiceImpl">
+    <property name="corePoolSize" value="${corePoolSize}" />
+    <property name="maxPoolSize" value="${maxPoolSize}" />
+    <property name="maPSeqConfigurationService" ref="maPSeqConfigurationService" />
+    <property name="maPSeqDAOBeanService" ref="maPSeqDAOBeanService" />
+    <property name="attributes">
+      <map>
+        <entry key="siteName" value="${siteName}" />
+        <entry key="subjectMergeHome" value="${subjectMergeHome}" />
+        <entry key="referenceSequence" value="${referenceSequence}" />
+        <entry key="baitIntervalList" value="${baitIntervalList}" />
+        <entry key="targetIntervalList" value="${targetIntervalList}" />
+        <entry key="bed" value="${bed}" />
+        <entry key="numberOfFreeBayesSubsets" value="${numberOfFreeBayesSubsets}" />
+        <entry key="par1Coordinate" value="${par1Coordinate}" />
+        <entry key="par2Coordinate" value="${par2Coordinate}" />
+        <entry key="readGroupPlatform" value="${readGroupPlatform}" />
+        <entry key="sselProbe" value="${sselProbe}" />
+        <entry key="gender" value="${gender}" />
+        <entry key="icSNPIntervalList" value="${icSNPIntervalList}" />
+      </map>
+    </property>
+    <cm:managed-properties persistent-id="edu.unc.mapseq.workflow.ncnexus38.mergevc"
+      update-strategy="container-managed" />
+  </bean>
+
+  <service ref="NCNEXUS38MergeVCWorkflowBeanService" interface="edu.unc.mapseq.workflow.WorkflowBeanService" />
+
+</blueprint>

@@ -1,0 +1,7 @@
+.classpath
+.project
+.settings
+src/main/resources/edu/unc/mapseq/workflow/ncnexus/mergebam/workflow.properties
+target
+tmp
+var
