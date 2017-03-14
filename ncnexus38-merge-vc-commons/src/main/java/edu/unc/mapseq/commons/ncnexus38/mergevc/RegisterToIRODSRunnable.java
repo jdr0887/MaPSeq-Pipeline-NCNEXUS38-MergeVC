@@ -261,7 +261,7 @@ public class RegisterToIRODSRunnable implements Runnable {
                     sb = new StringBuilder();
 
                     for (ImmutablePair<String, String> attribute : bean.getAttributes()) {
-                        sb.append(String.format("$IRODS_HOME/imeta add -d %s/%s %s %s NCNEXUS%n", irodsDirectory, bean.getFile().getName(),
+                        sb.append(String.format("$IRODS_HOME/imeta add -d %s/%s %s %s NCNEXUS38%n", irodsDirectory, bean.getFile().getName(),
                                 attribute.getLeft(), attribute.getRight()));
                     }
 
