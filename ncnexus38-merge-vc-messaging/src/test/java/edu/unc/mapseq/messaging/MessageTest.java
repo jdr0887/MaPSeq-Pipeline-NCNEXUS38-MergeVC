@@ -27,7 +27,7 @@ public class MessageTest {
         try {
             connection = connectionFactory.createConnection();
             session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            Destination destination = session.createQueue("queue/ncnexus38.variantcalling");
+            Destination destination = session.createQueue("queue/ncnexus38.merge.vc");
             MessageProducer producer = session.createProducer(destination);
             producer.setDeliveryMode(DeliveryMode.PERSISTENT);
 
@@ -40,13 +40,15 @@ public class MessageTest {
 
             generator.writeStartObject();
             generator.writeStringField("entityType", "Sample");
-            generator.writeStringField("id", "1774501");
+            // generator.writeStringField("id", "1774501");
+            generator.writeStringField("id", "2622760");
 
             generator.writeArrayFieldStart("attributes");
 
             generator.writeStartObject();
             generator.writeStringField("name", "subjectName");
-            generator.writeStringField("value", "NCG_00020");
+            generator.writeStringField("value", "HRC061-1");
+            // generator.writeStringField("value", "NCG_00020");
             generator.writeEndObject();
 
             generator.writeEndArray();
@@ -54,7 +56,7 @@ public class MessageTest {
 
             generator.writeStartObject();
             generator.writeStringField("entityType", "WorkflowRun");
-            generator.writeStringField("name", "NCG_00020-ncnexus38-vc-test-3");
+            generator.writeStringField("name", "HRC061-1_jdr_1");
             generator.writeArrayFieldStart("attributes");
 
             generator.writeStartObject();
@@ -64,7 +66,7 @@ public class MessageTest {
 
             generator.writeStartObject();
             generator.writeStringField("name", "freeBayesJobCount");
-            generator.writeStringField("value", "48");
+            generator.writeStringField("value", "24");
             generator.writeEndObject();
 
             generator.writeEndArray();
