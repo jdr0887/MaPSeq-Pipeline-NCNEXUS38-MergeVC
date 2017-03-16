@@ -38,13 +38,13 @@ import edu.unc.mapseq.module.sequencing.picard.PicardAddOrReplaceReadGroupsCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardMarkDuplicatesCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardMergeSAMCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardSortOrderType;
-import edu.unc.mapseq.module.sequencing.picard.PicardSortVCFCLI;
 import edu.unc.mapseq.module.sequencing.picard2.PicardCollectHsMetricsCLI;
 import edu.unc.mapseq.module.sequencing.picard2.PicardMarkDuplicates;
 import edu.unc.mapseq.module.sequencing.samtools.SAMToolsDepthCLI;
 import edu.unc.mapseq.module.sequencing.samtools.SAMToolsFlagstatCLI;
 import edu.unc.mapseq.module.sequencing.samtools.SAMToolsIndexCLI;
 import edu.unc.mapseq.module.sequencing.vcflib.MergeVCFCLI;
+import edu.unc.mapseq.module.sequencing.vcflib.SortAndRemoveDuplicatesCLI;
 import edu.unc.mapseq.module.sequencing.vcflib.VCFFilterCLI;
 import edu.unc.mapseq.workflow.WorkflowException;
 import edu.unc.mapseq.workflow.core.WorkflowJobFactory;
@@ -390,19 +390,20 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             graph.addEdge(mergeVCFJob, vcfFilterJob);
 
             // new job
-            builder = SequencingWorkflowJobFactory.createJob(++count, PicardSortVCFCLI.class, attempt.getId()).siteName(siteName);
-            File picardSortVCFOutput = new File(subjectDirectory, vcfFilterOutput.getName().replace(".vcf", ".sorted.vcf"));
-            builder.addArgument(PicardSortVCFCLI.INPUT, vcfFilterOutput.getAbsolutePath()).addArgument(PicardSortVCFCLI.OUTPUT,
-                    picardSortVCFOutput.getAbsolutePath());
-            CondorJob picardSortVCFJob = builder.build();
-            logger.info(picardSortVCFJob.toString());
-            graph.addVertex(picardSortVCFJob);
-            graph.addEdge(vcfFilterJob, picardSortVCFJob);
+            builder = SequencingWorkflowJobFactory.createJob(++count, SortAndRemoveDuplicatesCLI.class, attempt.getId()).siteName(siteName);
+            File sortAndRemoveDuplicatesOutput = new File(subjectDirectory, vcfFilterOutput.getName().replace(".vcf", ".sorted.vcf"));
+            builder.addArgument(SortAndRemoveDuplicatesCLI.INPUT, vcfFilterOutput.getAbsolutePath())
+                    .addArgument(SortAndRemoveDuplicatesCLI.OUTPUT, sortAndRemoveDuplicatesOutput.getAbsolutePath());
+            CondorJob sortAndRemoveDuplicatesJob = builder.build();
+            logger.info(sortAndRemoveDuplicatesJob.toString());
+            graph.addVertex(sortAndRemoveDuplicatesJob);
+            graph.addEdge(vcfFilterJob, sortAndRemoveDuplicatesJob);
 
             // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, GATKVariantAnnotatorCLI.class, attempt.getId()).siteName(siteName);
-            File gatkVariantAnnotatorOutput = new File(subjectDirectory, picardSortVCFOutput.getName().replace(".vcf", ".va.vcf"));
-            builder.addArgument(GATKVariantAnnotatorCLI.VCF, picardSortVCFOutput.getAbsolutePath())
+            File gatkVariantAnnotatorOutput = new File(subjectDirectory,
+                    sortAndRemoveDuplicatesOutput.getName().replace(".vcf", ".va.vcf"));
+            builder.addArgument(GATKVariantAnnotatorCLI.VCF, sortAndRemoveDuplicatesOutput.getAbsolutePath())
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "FisherStrand")
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "QualByDepth")
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "ReadPosRankSumTest")
@@ -416,7 +417,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             CondorJob gatkVCFJob = builder.build();
             logger.info(gatkVCFJob.toString());
             graph.addVertex(gatkVCFJob);
-            graph.addEdge(picardSortVCFJob, gatkVCFJob);
+            graph.addEdge(sortAndRemoveDuplicatesJob, gatkVCFJob);
 
             // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, FilterVariantCLI.class, attempt.getId()).siteName(siteName);
@@ -435,8 +436,8 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
                     .addArgument(RemoveCLI.FILE, vcfFilterOutput.getAbsolutePath())
                     .addArgument(RemoveCLI.FILE, picardAddOrReplaceReadGroupsOut.getAbsolutePath())
                     .addArgument(RemoveCLI.FILE, mergeVCFOutput.getAbsolutePath())
-                    .addArgument(RemoveCLI.FILE, picardSortVCFOutput.getAbsolutePath())
-                    .addArgument(RemoveCLI.FILE, picardSortVCFOutput.getAbsolutePath().replace(".vcf", ".vcf.idx"))
+                    .addArgument(RemoveCLI.FILE, sortAndRemoveDuplicatesOutput.getAbsolutePath())
+                    .addArgument(RemoveCLI.FILE, sortAndRemoveDuplicatesOutput.getAbsolutePath().replace(".vcf", ".vcf.idx"))
                     .addArgument(RemoveCLI.FILE, ploidyFile.getAbsolutePath());
             for (int i = 0; i < Integer.valueOf(numberOfFreeBayesSubsets); i++) {
                 File freeBayesOutput = new File(subjectDirectory, String.format("%s_Trg.set%d.vcf", subjectName, i + 1));
