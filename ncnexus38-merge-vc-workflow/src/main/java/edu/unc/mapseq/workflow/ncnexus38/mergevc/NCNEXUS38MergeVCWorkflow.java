@@ -32,14 +32,14 @@ import edu.unc.mapseq.module.core.ZipCLI;
 import edu.unc.mapseq.module.sequencing.SureSelectTriggerSplitterCLI;
 import edu.unc.mapseq.module.sequencing.filter.FilterVariantCLI;
 import edu.unc.mapseq.module.sequencing.freebayes.FreeBayesCLI;
-import edu.unc.mapseq.module.sequencing.gatk.GATKPhoneHomeType;
-import edu.unc.mapseq.module.sequencing.gatk.GATKVariantAnnotatorCLI;
+import edu.unc.mapseq.module.sequencing.gatk3.GATKVariantAnnotatorCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardAddOrReplaceReadGroupsCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardMarkDuplicatesCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardMergeSAMCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardSortOrderType;
 import edu.unc.mapseq.module.sequencing.picard2.PicardCollectHsMetricsCLI;
 import edu.unc.mapseq.module.sequencing.picard2.PicardMarkDuplicates;
+import edu.unc.mapseq.module.sequencing.picard2.PicardSortVCFCLI;
 import edu.unc.mapseq.module.sequencing.samtools.SAMToolsDepthCLI;
 import edu.unc.mapseq.module.sequencing.samtools.SAMToolsFlagstatCLI;
 import edu.unc.mapseq.module.sequencing.samtools.SAMToolsIndexCLI;
@@ -391,7 +391,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
 
             // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, SortAndRemoveDuplicatesCLI.class, attempt.getId()).siteName(siteName);
-            File sortAndRemoveDuplicatesOutput = new File(subjectDirectory, vcfFilterOutput.getName().replace(".vcf", ".sorted.vcf"));
+            File sortAndRemoveDuplicatesOutput = new File(subjectDirectory, vcfFilterOutput.getName().replace(".vcf", ".srd.vcf"));
             builder.addArgument(SortAndRemoveDuplicatesCLI.INPUT, vcfFilterOutput.getAbsolutePath())
                     .addArgument(SortAndRemoveDuplicatesCLI.OUTPUT, sortAndRemoveDuplicatesOutput.getAbsolutePath());
             CondorJob sortAndRemoveDuplicatesJob = builder.build();
@@ -400,9 +400,18 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             graph.addEdge(vcfFilterJob, sortAndRemoveDuplicatesJob);
 
             // new job
+            builder = SequencingWorkflowJobFactory.createJob(++count, PicardSortVCFCLI.class, attempt.getId()).siteName(siteName);
+            File picardSortVCFOutput = new File(subjectDirectory, sortAndRemoveDuplicatesOutput.getName().replace(".vcf", ".ps.vcf"));
+            builder.addArgument(PicardSortVCFCLI.INPUT, vcfFilterOutput.getAbsolutePath()).addArgument(PicardSortVCFCLI.OUTPUT,
+                    picardSortVCFOutput.getAbsolutePath());
+            CondorJob picardSortVCFJob = builder.build();
+            logger.info(picardSortVCFJob.toString());
+            graph.addVertex(picardSortVCFJob);
+            graph.addEdge(sortAndRemoveDuplicatesJob, picardSortVCFJob);
+
+            // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, GATKVariantAnnotatorCLI.class, attempt.getId()).siteName(siteName);
-            File gatkVariantAnnotatorOutput = new File(subjectDirectory,
-                    sortAndRemoveDuplicatesOutput.getName().replace(".vcf", ".va.vcf"));
+            File gatkVariantAnnotatorOutput = new File(subjectDirectory, picardSortVCFOutput.getName().replace(".vcf", ".va.vcf"));
             builder.addArgument(GATKVariantAnnotatorCLI.VCF, sortAndRemoveDuplicatesOutput.getAbsolutePath())
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "FisherStrand")
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "QualByDepth")
@@ -412,12 +421,11 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "SpanningDeletions")
                     .addArgument(GATKVariantAnnotatorCLI.BAM, picardMarkDuplicatesOutput.getAbsolutePath())
                     .addArgument(GATKVariantAnnotatorCLI.REFERENCESEQUENCE, referenceSequence)
-                    .addArgument(GATKVariantAnnotatorCLI.OUT, gatkVariantAnnotatorOutput.getAbsolutePath())
-                    .addArgument(GATKVariantAnnotatorCLI.PHONEHOME, GATKPhoneHomeType.NO_ET.toString());
+                    .addArgument(GATKVariantAnnotatorCLI.OUT, gatkVariantAnnotatorOutput.getAbsolutePath());
             CondorJob gatkVCFJob = builder.build();
             logger.info(gatkVCFJob.toString());
             graph.addVertex(gatkVCFJob);
-            graph.addEdge(sortAndRemoveDuplicatesJob, gatkVCFJob);
+            graph.addEdge(picardSortVCFJob, gatkVCFJob);
 
             // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, FilterVariantCLI.class, attempt.getId()).siteName(siteName);
