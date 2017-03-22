@@ -402,7 +402,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, PicardSortVCFCLI.class, attempt.getId()).siteName(siteName);
             File picardSortVCFOutput = new File(subjectDirectory, sortAndRemoveDuplicatesOutput.getName().replace(".vcf", ".ps.vcf"));
-            builder.addArgument(PicardSortVCFCLI.INPUT, vcfFilterOutput.getAbsolutePath()).addArgument(PicardSortVCFCLI.OUTPUT,
+            builder.addArgument(PicardSortVCFCLI.INPUT, sortAndRemoveDuplicatesOutput.getAbsolutePath()).addArgument(PicardSortVCFCLI.OUTPUT,
                     picardSortVCFOutput.getAbsolutePath());
             CondorJob picardSortVCFJob = builder.build();
             logger.info(picardSortVCFJob.toString());
