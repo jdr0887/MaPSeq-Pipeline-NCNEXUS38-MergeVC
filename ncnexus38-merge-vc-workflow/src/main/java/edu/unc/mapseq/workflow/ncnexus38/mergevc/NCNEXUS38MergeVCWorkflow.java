@@ -402,8 +402,8 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, PicardSortVCFCLI.class, attempt.getId()).siteName(siteName);
             File picardSortVCFOutput = new File(subjectDirectory, sortAndRemoveDuplicatesOutput.getName().replace(".vcf", ".ps.vcf"));
-            builder.addArgument(PicardSortVCFCLI.INPUT, sortAndRemoveDuplicatesOutput.getAbsolutePath()).addArgument(PicardSortVCFCLI.OUTPUT,
-                    picardSortVCFOutput.getAbsolutePath());
+            builder.addArgument(PicardSortVCFCLI.INPUT, sortAndRemoveDuplicatesOutput.getAbsolutePath())
+                    .addArgument(PicardSortVCFCLI.OUTPUT, picardSortVCFOutput.getAbsolutePath());
             CondorJob picardSortVCFJob = builder.build();
             logger.info(picardSortVCFJob.toString());
             graph.addVertex(picardSortVCFJob);
@@ -412,7 +412,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             // new job
             builder = SequencingWorkflowJobFactory.createJob(++count, GATKVariantAnnotatorCLI.class, attempt.getId()).siteName(siteName);
             File gatkVariantAnnotatorOutput = new File(subjectDirectory, picardSortVCFOutput.getName().replace(".vcf", ".va.vcf"));
-            builder.addArgument(GATKVariantAnnotatorCLI.VCF, sortAndRemoveDuplicatesOutput.getAbsolutePath())
+            builder.addArgument(GATKVariantAnnotatorCLI.VCF, picardSortVCFOutput.getAbsolutePath())
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "FisherStrand")
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "QualByDepth")
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "ReadPosRankSumTest")
