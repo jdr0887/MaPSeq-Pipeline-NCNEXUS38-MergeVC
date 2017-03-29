@@ -1,3 +1,2 @@
 edu.unc.mapseq.commands.ncnexus38.mergevc.RunWorkflowAction
-edu.unc.mapseq.commands.ncnexus38.mergevc.SaveFlagstatAttributesAction
 edu.unc.mapseq.commands.ncnexus38.mergevc.RegisterToIRODSAction
