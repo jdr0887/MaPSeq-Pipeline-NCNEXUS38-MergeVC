@@ -1,0 +1,7 @@
+edu.unc.mapseq.commands.ncnexus38.mergevc
+edu.unc.mapseq.commons.ncnexus38.mergevc
+edu.unc.mapseq.executor.ncnexus38.mergevc
+edu.unc.mapseq.messaging.ncnexus38.mergevc
+edu.unc.mapseq.workflow.ncnexus38.mergevc
+edu.unc.mapseq.ws.ncnexus38.mergevc
+edu.unc.mapseq.ws.ncnexus38.mergevc.impl
