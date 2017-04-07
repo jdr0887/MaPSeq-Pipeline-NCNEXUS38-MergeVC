@@ -1,31 +1,150 @@
 digraph G {
-  PicardMergeSAMCLI_1 [ label="PicardMergeSAMCLI_1" ];
-  PicardAddOrReplaceReadGroupsCLI_2 [ label="PicardAddOrReplaceReadGroupsCLI_2" ];
-  PicardMarkDuplicatesCLI_3 [ label="PicardMarkDuplicatesCLI_3" ];
-  SAMToolsIndexCLI_4 [ label="SAMToolsIndexCLI_4" ];
-  SAMToolsFlagstatCLI_5 [ label="SAMToolsFlagstatCLI_5" ];
-  ZipCLI_6 [ label="ZipCLI_6" ];
-  SAMToolsDepthCLI_7 [ label="SAMToolsDepthCLI_7" ];
-  ZipCLI_8 [ label="ZipCLI_8" ];
-  SureSelectTriggerSplitterCLI_9 [ label="SureSelectTriggerSplitterCLI_9" ];
-  FreeBayesCLI_10 [ label="FreeBayesCLI_10" ];
-  FreeBayesCLI_11 [ label="FreeBayesCLI_11" ];
-  FreeBayesCLI_12 [ label="FreeBayesCLI_12" ];
-  FreeBayesCLI_13 [ label="FreeBayesCLI_13" ];
-  MergeVCFCLI_14 [ label="MergeVCFCLI_14" ];
-  VCFFilterCLI_15 [ label="VCFFilterCLI_15" ];
-  SortAndRemoveDuplicatesCLI_16 [ label="SortAndRemoveDuplicatesCLI_16" ];
-  PicardSortVCFCLI_17 [ label="PicardSortVCFCLI_17" ];
-  GATKVariantAnnotatorCLI_18 [ label="GATKVariantAnnotatorCLI_18" ];
-  FilterVariantCLI_19 [ label="FilterVariantCLI_19" ];
-  RemoveCLI_20 [ label="RemoveCLI_20" ];
+  PicardMergeSAMCLI_1 [ label="PicardMergeSAMCLI_1
+--sortOrder unsorted
+--output <subjectName>.merged.bam
+" ];
+  PicardAddOrReplaceReadGroupsCLI_2 [ label="PicardAddOrReplaceReadGroupsCLI_2
+--input <subjectName>.merged.bam
+--readGroupCenterName UNC
+--readGroupId <subjectName>
+--readGroupLibrary <subjectName>
+--readGroupPlatform Illumina
+--readGroupPlatformUnit <subjectName>
+--readGroupSampleName <subjectName>
+--sortOrder coordinate
+--output <subjectName>.merged.rg.bam
+" ];
+  PicardMarkDuplicatesCLI_3 [ label="PicardMarkDuplicatesCLI_3
+--input <subjectName>.merged.rg.bam
+--output <subjectName>.merged.rg.deduped.bam
+--metricsFile <subjectName>.merged.rg.deduped.metrics
+" ];
+  SAMToolsIndexCLI_4 [ label="SAMToolsIndexCLI_4
+--input <subjectName>.merged.rg.deduped.bam
+--output <subjectName>.merged.rg.deduped.bai
+" ];
+  SAMToolsFlagstatCLI_5 [ label="SAMToolsFlagstatCLI_5
+--input <subjectName>.merged.rg.deduped.bam
+--output <subjectName>.merged.rg.deduped.flagstat
+" ];
+  ZipCLI_6 [ label="ZipCLI_6
+--workDir <tmpdir>
+--entry <subjectName>.merged.rg.deduped.bam
+--entry <subjectName>.merged.rg.deduped.bai
+--output <subjectName>.merged.rg.deduped.zip
+" ];
+  SAMToolsDepthCLI_7 [ label="SAMToolsDepthCLI_7
+--bam <subjectName>.merged.rg.deduped.bam
+--output <subjectName>.merged.rg.deduped.depth.txt
+--bed <bed>
+--baseQuality 20
+--mappingQuality 20
+" ];
+  PicardCollectHsMetricsCLI_8 [ label="PicardCollectHsMetricsCLI_8
+--input <subjectName>.merged.rg.deduped.bam
+--output <subjectName>.merged.rg.deduped.hs.metrics
+--referenceSequence <referenceSequence>
+--baitIntervals <baitIntervalList>
+--targetIntervals <targetIntervalList>
+" ];
+  SureSelectTriggerSplitterCLI_9 [ label="SureSelectTriggerSplitterCLI_9
+--gender <gender>
+--bed <bed>
+--workDirectory <outputDirectory>
+--subjectName <subjectName>
+--numberOfSubsets <numberOfFreeBayesSubsets>
+--par1Coordinate <par1Coordinate>
+--par2Coordinate <par2Coordinate>
+--outputPrefix <subjectName>_Trg
+" ];
+  FreeBayesCLI_10 [ label="FreeBayesCLI_10
+--genotypeQualities
+--reportMonomorphic
+--bam <subjectName>.merged.rg.deduped.bam
+--vcf <subjectName>_Trg.set1.vcf
+--fastaReference <referenceSequence>
+--targets <subjectName>_Trg.interval.set1.bed
+--copyNumberMap <subjectName>_Trg.ploidy.bed
+" ];
+  FreeBayesCLI_11 [ label="FreeBayesCLI_11
+--genotypeQualities
+--reportMonomorphic
+--bam <subjectName>.merged.rg.deduped.bam
+--vcf <subjectName>_Trg.set2.vcf
+--fastaReference <referenceSequence>
+--targets <subjectName>_Trg.interval.set2.bed
+--copyNumberMap <subjectName>_Trg.ploidy.bed
+" ];
+  FreeBayesCLI_12 [ label="FreeBayesCLI_12
+--genotypeQualities
+--reportMonomorphic
+--bam <subjectName>.merged.rg.deduped.bam
+--vcf <subjectName>_Trg.set3.vcf
+--fastaReference <referenceSequence>
+--targets <subjectName>_Trg.interval.set3.bed
+--copyNumberMap <subjectName>_Trg.ploidy.bed
+" ];
+  FreeBayesCLI_13 [ label="FreeBayesCLI_13
+--genotypeQualities
+--reportMonomorphic
+--bam <subjectName>.merged.rg.deduped.bam
+--vcf <subjectName>_Trg.set4.vcf
+--fastaReference <referenceSequence>
+--targets <subjectName>_Trg.interval.set4.bed
+--copyNumberMap <subjectName>_Trg.ploidy.bed
+" ];
+  MergeVCFCLI_14 [ label="MergeVCFCLI_14
+--input <subjectName>_Trg.
+--workDirectory <outputDirectory>
+--output <subjectName>.merged.rg.deduped.vcf
+" ];
+  VCFFilterCLI_15 [ label="VCFFilterCLI_15
+--input <subjectName>.merged.rg.deduped.vcf
+--output <subjectName>.merged.rg.deduped.filtered.vcf
+--infoFilter QUAL_>_10
+--infoFilter DP_>_5
+" ];
+  SortAndRemoveDuplicatesCLI_16 [ label="SortAndRemoveDuplicatesCLI_16
+--input <subjectName>.merged.rg.deduped.filtered.vcf
+--output <subjectName>.merged.rg.deduped.filtered.srd.vcf
+" ];
+  PicardSortVCFCLI_17 [ label="PicardSortVCFCLI_17
+--input <subjectName>.merged.rg.deduped.filtered.srd.vcf
+--output <subjectName>.merged.rg.deduped.filtered.srd.ps.vcf
+" ];
+  GATKVariantAnnotatorCLI_18 [ label="GATKVariantAnnotatorCLI_18
+--vcf <subjectName>.merged.rg.deduped.filtered.srd.ps.vcf
+--annotation FisherStrand
+--annotation QualByDepth
+--annotation ReadPosRankSumTest
+--annotation DepthPerAlleleBySample
+--annotation HomopolymerRun
+--annotation SpanningDeletions
+--bam <subjectName>.merged.rg.deduped.bam
+--referenceSequence <referenceSequence>
+--out <subjectName>.merged.rg.deduped.filtered.srd.ps.va.vcf
+" ];
+  FilterVariantCLI_19 [ label="FilterVariantCLI_19
+--intervalList <icSNPIntervalList>
+--input <subjectName>.merged.rg.deduped.filtered.srd.ps.va.vcf
+--output <subjectName>.merged.rg.deduped.filtered.srd.ps.va.ic.vcf
+" ];
+  RemoveCLI_20 [ label="RemoveCLI_20
+--file <subjectName>.merged.bam
+--file <subjectName>.merged.rg.deduped.filtered.vcf
+--file <subjectName>.merged.rg.bam
+--file <subjectName>.merged.rg.deduped.vcf
+--file <subjectName>.merged.rg.deduped.filtered.srd.vcf
+--file <subjectName>.merged.rg.deduped.filtered.srd.vcf.idx
+--file <subjectName>_Trg.ploidy.bed
+" ];
   PicardMergeSAMCLI_1 -> PicardAddOrReplaceReadGroupsCLI_2;
   PicardAddOrReplaceReadGroupsCLI_2 -> PicardMarkDuplicatesCLI_3;
   PicardMarkDuplicatesCLI_3 -> SAMToolsIndexCLI_4;
   SAMToolsIndexCLI_4 -> SAMToolsFlagstatCLI_5;
   SAMToolsIndexCLI_4 -> ZipCLI_6;
   SAMToolsIndexCLI_4 -> SAMToolsDepthCLI_7;
-  SAMToolsIndexCLI_4 -> ZipCLI_8;
+  SAMToolsIndexCLI_4 -> PicardCollectHsMetricsCLI_8;
   SAMToolsIndexCLI_4 -> SureSelectTriggerSplitterCLI_9;
   SureSelectTriggerSplitterCLI_9 -> FreeBayesCLI_10;
   SureSelectTriggerSplitterCLI_9 -> FreeBayesCLI_11;
