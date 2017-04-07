@@ -231,7 +231,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
 
             }
 
-            // // new job
+            // new job
             CondorJobBuilder builder = WorkflowJobFactory.createJob(++count, PicardMergeSAMCLI.class, attempt.getId()).siteName(siteName);
             File mergeBAMFilesOut = new File(subjectDirectory, String.format("%s.merged.bam", subjectName));
             builder.addArgument(PicardMergeSAMCLI.SORTORDER, "unsorted").addArgument(PicardMergeSAMCLI.OUTPUT,
