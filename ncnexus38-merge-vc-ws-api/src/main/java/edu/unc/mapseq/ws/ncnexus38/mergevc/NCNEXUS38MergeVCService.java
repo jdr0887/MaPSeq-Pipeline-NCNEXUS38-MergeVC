@@ -36,8 +36,8 @@ public interface NCNEXUS38MergeVCService {
     public List<MetricsResult> getMetrics(@PathParam("subjectName") @WebParam(name = "subjectName") String subjectName);
 
     @GET
-    @Path("/identityCheck/{sampleId}")
+    @Path("/identityCheck/{subjectName}")
     @WebMethod
-    public VCFResult identityCheck(@PathParam("sampleId") @WebParam(name = "sampleId") Long sampleId);
+    public VCFResult identityCheck(@PathParam("subjectName") @WebParam(name = "subjectName") String subjectName);
 
 }

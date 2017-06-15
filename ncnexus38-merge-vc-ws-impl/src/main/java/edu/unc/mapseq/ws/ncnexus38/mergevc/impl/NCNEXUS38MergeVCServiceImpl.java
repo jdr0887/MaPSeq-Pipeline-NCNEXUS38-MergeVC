@@ -7,21 +7,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.cxf.common.util.StringUtils;
 import org.renci.vcf.VCFParser;
 import org.renci.vcf.VCFResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.unc.mapseq.dao.MaPSeqDAOException;
 import edu.unc.mapseq.dao.SampleDAO;
-import edu.unc.mapseq.dao.model.FileData;
-import edu.unc.mapseq.dao.model.MimeType;
-import edu.unc.mapseq.dao.model.Sample;
 import edu.unc.mapseq.ws.ncnexus38.mergevc.MetricsResult;
 import edu.unc.mapseq.ws.ncnexus38.mergevc.NCNEXUS38MergeVCService;
 
@@ -93,40 +89,34 @@ public class NCNEXUS38MergeVCServiceImpl implements NCNEXUS38MergeVCService {
     }
 
     @Override
-    public VCFResult identityCheck(Long sampleId) {
-        logger.debug("ENTERING lookupIdentityInfoFromVCF(Long)");
-        if (sampleId == null) {
-            logger.warn("sampleId is null");
-            return null;
-        }
-
-        Sample sample = null;
-        try {
-            sample = sampleDAO.findById(sampleId);
-            logger.info(sample.toString());
-        } catch (MaPSeqDAOException e) {
-            logger.error("Failed to find Sample", e);
-        }
-
-        if (sample == null) {
-            return null;
-        }
-
-        Set<FileData> sampleFileDataSet = sample.getFileDatas();
+    public VCFResult identityCheck(String subjectName) {
+        logger.debug("ENTERING identityCheck(String)");
 
         VCFParser parser = VCFParser.getInstance();
+
         VCFResult ret = null;
-        if (sampleFileDataSet != null) {
-            for (FileData fileData : sampleFileDataSet) {
-                if (MimeType.TEXT_VCF.equals(fileData.getMimeType()) && fileData.getName().endsWith(".ic.vcf")) {
-                    File icSNPVCFFile = new File(fileData.getPath(), fileData.getName());
-                    logger.info("identity check file is: {}", icSNPVCFFile.getAbsolutePath());
-                    if (icSNPVCFFile.exists()) {
-                        ret = parser.parse(icSNPVCFFile);
-                    }
-                }
+        if (StringUtils.isEmpty(subjectName)) {
+            logger.warn("subjectName is empty");
+            return null;
+        }
+
+        File subjectDirectory = new File(subjectMergeHome, subjectName);
+
+        if (!subjectDirectory.exists()) {
+            logger.warn("SubjectMergeHome doesn't exist: {}", subjectDirectory.getAbsolutePath());
+            return null;
+        }
+
+        Collection<File> fileList = FileUtils.listFiles(subjectDirectory, FileFilterUtils.suffixFileFilter(".ic.vcf"), null);
+
+        if (CollectionUtils.isNotEmpty(fileList)) {
+            File icFile = fileList.iterator().next();
+            logger.info("identity check file is: {}", icFile.getAbsolutePath());
+            if (icFile.exists()) {
+                ret = parser.parse(icFile);
             }
         }
+
         return ret;
     }
 
