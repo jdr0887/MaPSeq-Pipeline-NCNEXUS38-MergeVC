@@ -422,7 +422,6 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "ReadPosRankSumTest")
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "DepthPerAlleleBySample")
                     .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "HomopolymerRun")
-                    .addArgument(GATKVariantAnnotatorCLI.ANNOTATION, "SpanningDeletions")
                     .addArgument(GATKVariantAnnotatorCLI.BAM, picardMarkDuplicatesOutput.getAbsolutePath())
                     .addArgument(GATKVariantAnnotatorCLI.REFERENCESEQUENCE, referenceSequence)
                     .addArgument(GATKVariantAnnotatorCLI.OUT, gatkVariantAnnotatorOutput.getAbsolutePath());
