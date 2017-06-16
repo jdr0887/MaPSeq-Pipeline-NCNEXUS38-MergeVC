@@ -34,7 +34,6 @@ import edu.unc.mapseq.dao.model.WorkflowRunAttempt;
 import edu.unc.mapseq.module.core.RemoveCLI;
 import edu.unc.mapseq.module.core.ZipCLI;
 import edu.unc.mapseq.module.sequencing.SureSelectTriggerSplitterCLI;
-import edu.unc.mapseq.module.sequencing.filter.FilterVariantCLI;
 import edu.unc.mapseq.module.sequencing.freebayes.FreeBayesCLI;
 import edu.unc.mapseq.module.sequencing.gatk3.GATKVariantAnnotatorCLI;
 import edu.unc.mapseq.module.sequencing.picard.PicardAddOrReplaceReadGroupsCLI;
@@ -89,7 +88,6 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
         String numberOfFreeBayesSubsets = getWorkflowBeanService().getAttributes().get("numberOfFreeBayesSubsets");
         String gender = getWorkflowBeanService().getAttributes().get("gender");
         String sselProbe = getWorkflowBeanService().getAttributes().get("sselProbe");
-        String icSNPIntervalList = getWorkflowBeanService().getAttributes().get("icSNPIntervalList");
 
         WorkflowRunAttempt attempt = getWorkflowRunAttempt();
         WorkflowRun workflowRun = attempt.getWorkflowRun();
@@ -431,17 +429,6 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             graph.addEdge(picardSortVCFJob, gatkVCFJob);
 
             // new job
-            builder = SequencingWorkflowJobFactory.createJob(++count, FilterVariantCLI.class, attempt.getId()).siteName(siteName);
-            File filterVariantOutput = new File(subjectDirectory, gatkVariantAnnotatorOutput.getName().replace(".vcf", ".ic.vcf"));
-            builder.addArgument(FilterVariantCLI.INTERVALLIST, icSNPIntervalList)
-                    .addArgument(FilterVariantCLI.INPUT, gatkVariantAnnotatorOutput.getAbsolutePath())
-                    .addArgument(FilterVariantCLI.OUTPUT, filterVariantOutput.getAbsolutePath());
-            CondorJob filterVariantJob = builder.build();
-            logger.info(filterVariantJob.toString());
-            graph.addVertex(filterVariantJob);
-            graph.addEdge(gatkVCFJob, filterVariantJob);
-
-            // new job
             builder = WorkflowJobFactory.createJob(++count, RemoveCLI.class, attempt.getId()).siteName(siteName);
             builder.addArgument(RemoveCLI.FILE, mergeBAMFilesOut.getAbsolutePath())
                     .addArgument(RemoveCLI.FILE, vcfFilterOutput.getAbsolutePath())
@@ -459,7 +446,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
             CondorJob removeJob = builder.build();
             logger.info(removeJob.toString());
             graph.addVertex(removeJob);
-            graph.addEdge(filterVariantJob, removeJob);
+            graph.addEdge(gatkVCFJob, removeJob);
 
         } catch (Exception e) {
             throw new WorkflowException(e);
