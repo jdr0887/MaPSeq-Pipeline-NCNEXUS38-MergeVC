@@ -10,18 +10,6 @@
       <cm:property name="subjectMergeHome" value="/projects/sequence_analysis/medgenwork/prod/NCNEXUS38/subject-merge" />
       <cm:property name="siteName" value="Hatteras" />
       <cm:property name="readGroupPlatform" value="Illumina MiSeq" />
-      <!-- build 37 -->
-      <!-- <cm:property name="par1Coordinate" value="60001-2699520" /> -->
-      <!-- <cm:property name="par2Coordinate" value="154931044-155260560" /> -->
-      <!-- <cm:property name="referenceSequence" -->
-      <!-- value="$NCNEXUS_REFERENCES_DIRECTORY/BUILD.37.1/bwa061sam0118/BUILD.37.1.plusM.sorted.shortid.fa" /> -->
-      <!-- <cm:property name="baitIntervalList" -->
-      <!-- value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.interval_list" /> -->
-      <!-- <cm:property name="targetIntervalList" -->
-      <!-- value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.interval_list" /> -->
-      <!-- <cm:property name="bed" -->
-      <!-- value="$NCNEXUS_RESOURCES_DIRECTORY/intervals/agilent_v5_capture_region_pm_100.shortid.bed" /> -->
-      <!-- build 38 -->
       <cm:property name="par1Coordinate" value="10001-2781479" />
       <cm:property name="par2Coordinate" value="155701383-156030895" />
       <cm:property name="referenceSequence" value="$NCNEXUS_REFERENCES_DIRECTORY/BUILD.38/BUILD.38.p7.plusM.sorted.shortid.Ymasked.fa" />
@@ -60,7 +48,6 @@
         <entry key="readGroupPlatform" value="${readGroupPlatform}" />
         <entry key="sselProbe" value="${sselProbe}" />
         <entry key="gender" value="${gender}" />
-        <entry key="icSNPIntervalList" value="${icSNPIntervalList}" />
       </map>
     </property>
     <cm:managed-properties persistent-id="edu.unc.mapseq.workflow.ncnexus38.mergevc"
