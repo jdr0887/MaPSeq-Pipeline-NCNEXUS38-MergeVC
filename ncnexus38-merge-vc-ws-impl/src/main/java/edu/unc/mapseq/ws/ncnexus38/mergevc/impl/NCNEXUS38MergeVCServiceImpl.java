@@ -11,9 +11,6 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
-import org.apache.cxf.common.util.StringUtils;
-import org.renci.vcf.VCFParser;
-import org.renci.vcf.VCFResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,38 +82,6 @@ public class NCNEXUS38MergeVCServiceImpl implements NCNEXUS38MergeVCService {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
         }
-        return ret;
-    }
-
-    @Override
-    public VCFResult identityCheck(String subjectName) {
-        logger.debug("ENTERING identityCheck(String)");
-
-        VCFParser parser = VCFParser.getInstance();
-
-        VCFResult ret = null;
-        if (StringUtils.isEmpty(subjectName)) {
-            logger.warn("subjectName is empty");
-            return null;
-        }
-
-        File subjectDirectory = new File(subjectMergeHome, subjectName);
-
-        if (!subjectDirectory.exists()) {
-            logger.warn("SubjectMergeHome doesn't exist: {}", subjectDirectory.getAbsolutePath());
-            return null;
-        }
-
-        Collection<File> fileList = FileUtils.listFiles(subjectDirectory, FileFilterUtils.suffixFileFilter(".ic.vcf"), null);
-
-        if (CollectionUtils.isNotEmpty(fileList)) {
-            File icFile = fileList.iterator().next();
-            logger.info("identity check file is: {}", icFile.getAbsolutePath());
-            if (icFile.exists()) {
-                ret = parser.parse(icFile);
-            }
-        }
-
         return ret;
     }
 

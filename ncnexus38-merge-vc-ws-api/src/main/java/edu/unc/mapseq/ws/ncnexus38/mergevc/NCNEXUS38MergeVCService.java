@@ -16,8 +16,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.xml.ws.BindingType;
 
-import org.renci.vcf.VCFResult;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -34,10 +32,5 @@ public interface NCNEXUS38MergeVCService {
     @Path("/getMetrics/{subjectName}")
     @WebMethod
     public List<MetricsResult> getMetrics(@PathParam("subjectName") @WebParam(name = "subjectName") String subjectName);
-
-    @GET
-    @Path("/identityCheck/{subjectName}")
-    @WebMethod
-    public VCFResult identityCheck(@PathParam("subjectName") @WebParam(name = "subjectName") String subjectName);
 
 }
