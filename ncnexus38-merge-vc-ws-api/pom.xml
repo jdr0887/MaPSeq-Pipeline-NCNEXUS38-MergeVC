@@ -15,10 +15,6 @@
   </properties>                
   <dependencies>
     <dependency>
-      <groupId>org.renci</groupId>
-      <artifactId>vcf-parser</artifactId>
-    </dependency>
-    <dependency>
       <groupId>edu.unc.mapseq.mapseq-dao</groupId>
       <artifactId>mapseq-dao-api</artifactId>
     </dependency>
