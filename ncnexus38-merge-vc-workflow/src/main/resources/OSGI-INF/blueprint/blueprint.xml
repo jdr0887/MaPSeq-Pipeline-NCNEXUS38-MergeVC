@@ -35,7 +35,6 @@
       <cm:property name="sselProbe" value="5" />
       <cm:property name="numberOfFreeBayesSubsets" value="12" />
       <cm:property name="gender" value="M" />
-      <cm:property name="icSNPIntervalList" value="$NCNEXUS_RESOURCES_DIRECTORY/ncgenes/ic_snp_v2.38.list" />
     </cm:default-properties>
   </cm:property-placeholder>
 
