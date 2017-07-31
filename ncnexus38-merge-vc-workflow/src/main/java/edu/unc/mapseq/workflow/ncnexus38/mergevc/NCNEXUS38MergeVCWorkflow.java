@@ -23,7 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.unc.mapseq.commons.ncnexus38.mergevc.RegisterToIRODSRunnable;
-import edu.unc.mapseq.dao.MaPSeqDAOException;
 import edu.unc.mapseq.dao.model.Attribute;
 import edu.unc.mapseq.dao.model.FileData;
 import edu.unc.mapseq.dao.model.MimeType;
@@ -174,17 +173,13 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
 
             List<File> bamFileList = new ArrayList<File>();
 
-            Workflow baselineWorkflow = null;
-            try {
-                List<Workflow> workflowList = getWorkflowBeanService().getMaPSeqDAOBeanService().getWorkflowDAO()
-                        .findByName("NCNEXUS38Alignment");
-                if (CollectionUtils.isEmpty(workflowList)) {
-                    throw new WorkflowException("Could not find NCNEXUS38Alignment workflow");
-                }
-                baselineWorkflow = workflowList.get(0);
-            } catch (MaPSeqDAOException e1) {
-                e1.printStackTrace();
+            List<Workflow> workflowList = getWorkflowBeanService().getMaPSeqDAOBeanService().getWorkflowDAO()
+                    .findByName("NCNEXUS38Alignment");
+            if (CollectionUtils.isEmpty(workflowList)) {
+                throw new WorkflowException("Could not find NCNEXUS38Alignment workflow");
             }
+
+            Workflow baselineWorkflow = workflowList.get(0);
 
             for (Sample sample : sampleSet) {
 
@@ -200,7 +195,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
                 // 2nd attempt to find bam file
                 if (bamFile == null) {
                     for (FileData fileData : fileDataSet) {
-                        if (fileData.getName().endsWith(".md.bam")) {
+                        if (fileData.getName().endsWith(".md.bam") && fileData.getPath().contains("NCNEXUS38")) {
                             bamFile = new File(fileData.getPath(), fileData.getName());
                             break;
                         }
@@ -213,7 +208,7 @@ public class NCNEXUS38MergeVCWorkflow extends AbstractSequencingWorkflow {
                     File baselineOutputDirectory = SequencingWorkflowUtil.createOutputDirectory(sample, baselineWorkflow);
                     if (baselineOutputDirectory.exists()) {
                         for (File f : baselineOutputDirectory.listFiles()) {
-                            if (f.getName().endsWith(".md.bam")) {
+                            if (f.getName().endsWith(".md.bam") && f.getAbsolutePath().contains("NCNEXUS38")) {
                                 bamFile = f;
                                 break;
                             }
